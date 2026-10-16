@@ -1,13 +1,11 @@
-Device tree for the Retroid Pocket 6
+# Retroid Pocket 6 LineageOS build
 
-Information about the device, build and install instructions can be found [here](http://wiki.lineageos.org/devices/RP6/)
+This repository contains the RP6 device tree and the Buildkite pipeline used to build it with the NTSync-enabled QCS8550 kernel.
 
-## NTSync
+## Buildkite setup
 
-The RP6 kernel source is maintained separately from this device tree. Apply the included kernel patch from the Android source root before building:
+Run the pipeline on a Linux Buildkite agent with the Android 17/Lineage source tree and RP6 proprietary vendor files already present. The default source path is `/home/makin/retroid6-android17`; set `RP6_ANDROID_ROOT` on the agent if it differs. The agent needs the Android build dependencies, enough disk space for a full Android build, and the `buildkite-agent` CLI.
 
-```sh
-git apply --directory=kernel/ayn/qcs8550 device/retroidpocket/RP6/patches/kernel/ntsync.patch
-```
+Add a Buildkite cluster secret named `RP6_NTSYNC_DEPLOY_KEY` containing a read-only SSH deploy key for `Pepelespooder/android_kernel_ayn_qcs8550_ntsync`. The build step uses it only to fetch the `rp6-ntsync` branch. Keep the key and Buildkite API token in Buildkite's secret store; do not commit either value.
 
-The device tree adds `CONFIG_NTSYNC=y` through `configs/kernel/ntsync.config` when building the RP6 kernel. The driver source must be present in the kernel tree for this configuration option to take effect.
+The pipeline copies this device tree into the Android source checkout, checks the NTSync config, builds `RP6`, and uploads generated ZIP and IMG files as Buildkite artifacts.
