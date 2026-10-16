@@ -1,0 +1,9 @@
+steps:
+  - label: ":android: Build RP6 Lineage with NTSync"
+    command: "bash .buildkite/build-rp6.sh"
+    branches: "lineage-24.0"
+    timeout_in_minutes: 360
+    concurrency: 1
+    concurrency_group: "rp6-android-build"
+    checkout:
+      ssh_secret: "RP6_NTSYNC_DEPLOY_KEY"

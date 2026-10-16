@@ -1,18 +1,11 @@
-# Retroid Pocket 6 device tree
+# Retroid Pocket 6 LineageOS build
 
-LineageOS device configuration for the Retroid Pocket 6. Device setup and manual build instructions are in the [LineageOS RP6 guide](https://wiki.lineageos.org/devices/RP6/).
+This repository contains the RP6 device tree and the Buildkite pipeline used to build it with the NTSync-enabled QCS8550 kernel.
 
-## NTSync kernel
+## Buildkite setup
 
-The complete kernel source and NTSync driver are maintained in the private [RP6 kernel repository](https://github.com/Pepelespooder/android_kernel_ayn_qcs8550_ntsync). Its `rp6-ntsync` branch is a source snapshot of LineageOS QCS8550 kernel commit `18fa4eb5ea1818ab9c6f211683c09e3b2a32d2e6`, with `CONFIG_NTSYNC` enabled in the RP6 GKI configuration. This device tree adds the matching kernel config fragment through `TARGET_KERNEL_CONFIG_EXT`.
+Run the pipeline on a Linux Buildkite agent with the Android 17/Lineage source tree and RP6 proprietary vendor files already present. The default source path is `/home/makin/retroid6-android17`; set `RP6_ANDROID_ROOT` on the agent if it differs. The agent needs the Android build dependencies, enough disk space for a full Android build, and the `buildkite-agent` CLI.
 
-## GitHub Actions build
+Add a Buildkite cluster secret named `RP6_NTSYNC_DEPLOY_KEY` containing a read-only SSH deploy key for `Pepelespooder/android_kernel_ayn_qcs8550_ntsync`. The pipeline uses it to fetch the `rp6-ntsync` branch during checkout. Keep the key and Buildkite API token in Buildkite's secret store; do not commit either value.
 
-The `RP6 Android build` workflow can be started manually from the `lineage-24.0` branch. It runs on a self-hosted Linux runner with the `rp6-android` label and uses a pre-synced Lineage source tree containing the extracted RP6 and QCS8550 common vendor files.
-
-Configure these repository settings before starting a build:
-
-- Add the `NTSYNC_REPO_DEPLOY_KEY` Actions secret with a private SSH key whose matching deploy key has read-only access to `Pepelespooder/android_kernel_ayn_qcs8550_ntsync`.
-- Set the `RP6_ANDROID_ROOT` Actions variable to the synced Android source directory on the runner.
-
-The workflow checks out the private kernel branch, updates the kernel project in the Android tree, builds RP6, and uploads produced ZIP and image files as a workflow artifact.
+The pipeline copies this device tree into the Android source checkout, checks the NTSync config, builds `RP6`, and uploads generated ZIP and IMG files as Buildkite artifacts.
