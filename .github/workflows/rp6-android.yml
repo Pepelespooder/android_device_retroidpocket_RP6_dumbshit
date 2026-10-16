@@ -51,7 +51,13 @@ jobs:
           kernel_tree="$root/kernel/ayn/qcs8550"
           test -d "$device_tree" || { echo "RP6 device tree path is missing. Sync the RP6 Lineage source first."; exit 1; }
           test -d "$kernel_tree/.git" || test -f "$kernel_tree/.git" || { echo "Kernel project checkout is missing."; exit 1; }
-          test -z "$(git -C "$kernel_tree" status --porcelain)" || { echo "The runner's kernel checkout has local changes; clean or resync it before building."; exit 1; }
+          while IFS= read -r status_line; do
+            path="${status_line:3}"
+            case "$path" in
+              Documentation/userspace-api/index.rst|Documentation/userspace-api/ntsync.rst|arch/arm64/configs/vendor/moorechip/kalama_GKI.config|drivers/misc/Kconfig|drivers/misc/Makefile|drivers/misc/ntsync.c|include/uapi/linux/ntsync.h) ;;
+              *) echo "Unexpected local kernel change: $path"; exit 1 ;;
+            esac
+          done < <(git -C "$kernel_tree" status --porcelain)
           rsync -a --delete --exclude='.git' --exclude='.private-kernel' "$GITHUB_WORKSPACE/" "$device_tree/"
           git -C "$kernel_tree" fetch --no-tags "$GITHUB_WORKSPACE/.private-kernel" rp6-ntsync
           git -C "$kernel_tree" checkout --detach --force FETCH_HEAD
