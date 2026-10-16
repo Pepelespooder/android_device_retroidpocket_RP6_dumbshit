@@ -8,6 +8,9 @@ DEVICE_PATH := device/retroidpocket/RP6
 # Include the common OEM chipset BoardConfig.
 include device/ayn/qcs8550-common/BoardConfigCommon.mk
 
+# NTSync
+TARGET_KERNEL_CONFIG_EXT += $(DEVICE_PATH)/configs/kernel/ntsync.config
+
 # Display
 TARGET_SCREEN_DENSITY := 360
 
