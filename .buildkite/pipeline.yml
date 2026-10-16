@@ -5,5 +5,3 @@ steps:
     timeout_in_minutes: 360
     concurrency: 1
     concurrency_group: "rp6-android-build"
-    checkout:
-      ssh_secret: "RP6_NTSYNC_DEPLOY_KEY"

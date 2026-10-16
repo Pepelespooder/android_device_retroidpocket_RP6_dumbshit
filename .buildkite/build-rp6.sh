@@ -27,7 +27,17 @@ while IFS= read -r status_line; do
 done < <(git -C "$kernel_tree" status --porcelain)
 
 private_kernel="$(mktemp -d "${TMPDIR:-/tmp}/rp6-kernel.XXXXXX")"
+private_key="$private_kernel/id_ed25519"
+known_hosts="$private_kernel/known_hosts"
 trap 'rm -rf "$private_kernel"' EXIT
+buildkite-agent secret get RP6_NTSYNC_DEPLOY_KEY > "$private_key"
+chmod 600 "$private_key"
+curl --fail --silent --show-error https://api.github.com/meta | python3 -c \
+    'import json,sys; print("\n".join("github.com " + key for key in json.load(sys.stdin)["ssh_keys"]))' \
+    > "$known_hosts"
+chmod 600 "$known_hosts"
+export GIT_SSH_COMMAND="ssh -i $private_key -o IdentitiesOnly=yes -o UserKnownHostsFile=$known_hosts -o StrictHostKeyChecking=yes"
+
 git clone --quiet --depth 1 --branch rp6-ntsync \
     git@github.com:Pepelespooder/android_kernel_ayn_qcs8550_ntsync.git \
     "$private_kernel/source"
