@@ -4,7 +4,7 @@ LineageOS device configuration for the Retroid Pocket 6. Device setup and manual
 
 ## NTSync kernel
 
-The kernel source and NTSync driver are maintained in the private [RP6 kernel repository](https://github.com/Pepelespooder/android_kernel_ayn_qcs8550_ntsync). Its `rp6-ntsync` branch is based on the LineageOS QCS8550 kernel and enables `CONFIG_NTSYNC` in the RP6 GKI configuration. This device tree adds the matching kernel config fragment through `TARGET_KERNEL_CONFIG_EXT`.
+The complete kernel source and NTSync driver are maintained in the private [RP6 kernel repository](https://github.com/Pepelespooder/android_kernel_ayn_qcs8550_ntsync). Its `rp6-ntsync` branch is a source snapshot of LineageOS QCS8550 kernel commit `18fa4eb5ea1818ab9c6f211683c09e3b2a32d2e6`, with `CONFIG_NTSYNC` enabled in the RP6 GKI configuration. This device tree adds the matching kernel config fragment through `TARGET_KERNEL_CONFIG_EXT`.
 
 ## GitHub Actions build
 

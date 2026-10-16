@@ -51,11 +51,10 @@ jobs:
           kernel_tree="$root/kernel/ayn/qcs8550"
           test -d "$device_tree" || { echo "RP6 device tree path is missing. Sync the RP6 Lineage source first."; exit 1; }
           test -d "$kernel_tree/.git" || test -f "$kernel_tree/.git" || { echo "Kernel project checkout is missing."; exit 1; }
-          git -C "$kernel_tree" diff --quiet && git -C "$kernel_tree" diff --cached --quiet || { echo "The runner's kernel checkout has local changes; clean or resync it before building."; exit 1; }
+          test -z "$(git -C "$kernel_tree" status --porcelain)" || { echo "The runner's kernel checkout has local changes; clean or resync it before building."; exit 1; }
           rsync -a --delete --exclude='.git' --exclude='.private-kernel' "$GITHUB_WORKSPACE/" "$device_tree/"
           git -C "$kernel_tree" fetch --no-tags "$GITHUB_WORKSPACE/.private-kernel" rp6-ntsync
-          git -C "$kernel_tree" merge-base --is-ancestor HEAD FETCH_HEAD || { echo "Private kernel branch is based on a different kernel revision; rebase it to the synced Lineage kernel."; exit 1; }
-          git -C "$kernel_tree" checkout --detach FETCH_HEAD
+          git -C "$kernel_tree" checkout --detach --force FETCH_HEAD
           grep -q '^CONFIG_NTSYNC=y$' "$device_tree/configs/kernel/ntsync.config"
           grep -q '^CONFIG_NTSYNC=y$' "$kernel_tree/arch/arm64/configs/vendor/moorechip/kalama_GKI.config"
 
