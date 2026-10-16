@@ -12,7 +12,7 @@ The `RP6 Android build` workflow can be started manually from the `lineage-24.0`
 
 Configure these repository settings before starting a build:
 
-- Add the `NTSYNC_REPO_TOKEN` Actions secret using a fine-grained token with read-only Contents access to `Pepelespooder/android_kernel_ayn_qcs8550_ntsync`.
+- Add the `NTSYNC_REPO_DEPLOY_KEY` Actions secret with a private SSH key whose matching deploy key has read-only access to `Pepelespooder/android_kernel_ayn_qcs8550_ntsync`.
 - Set the `RP6_ANDROID_ROOT` Actions variable to the synced Android source directory on the runner.
 
 The workflow checks out the private kernel branch, updates the kernel project in the Android tree, builds RP6, and uploads produced ZIP and image files as a workflow artifact.

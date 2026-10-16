@@ -26,7 +26,7 @@ jobs:
           repository: Pepelespooder/android_kernel_ayn_qcs8550_ntsync
           ref: rp6-ntsync
           path: .private-kernel
-          token: ${{ secrets.NTSYNC_REPO_TOKEN }}
+          ssh-key: ${{ secrets.NTSYNC_REPO_DEPLOY_KEY }}
           fetch-depth: 1
           persist-credentials: false
 
